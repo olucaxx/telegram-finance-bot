@@ -1,10 +1,10 @@
 import datetime
 
 class Expense:
-    def __init__(self) -> None:
-        self.id: int
-        self.description: str
-        self.category: int
-        self.amount: float
-        self.date_time: datetime
-        self.observation: str
+    def __init__(self, id: int, description: str, category: str, amount: float, date_time: datetime, observation: str) -> None:
+        self.id = id
+        self.description = description
+        self.category = category
+        self.amount = amount
+        self.date_time = date_time
+        self.observation = observation

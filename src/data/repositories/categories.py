@@ -4,7 +4,7 @@ from sqlite3 import Cursor
 def insert(cursor: Cursor, name: str) -> None:
     cursor.execute('INSERT INTO categories(name) VALUES (?)', (name,))
 
-def select(cursor: Cursor, category: str | None = None, check_existense: bool = True) -> List[Tuple]:
+def select(cursor: Cursor, category: str | None, check_if_active: bool) -> List[Tuple]:
     query = 'SELECT id, name FROM categories WHERE 1=1'
     params = []
     
@@ -12,7 +12,7 @@ def select(cursor: Cursor, category: str | None = None, check_existense: bool = 
         query += ' AND name = ?'
         params.append(category)
     
-    if check_existense:
+    if check_if_active:
         query += ' AND is_active = 1'
         
     query += ' ORDER BY id ASC'

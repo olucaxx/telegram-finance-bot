@@ -9,7 +9,7 @@ def insert(cursor: Cursor, description: str, category_id: int, amount: float, da
         ''', (description, category_id, amount, date_time, observation)
     )
 
-def select(cursor: Cursor, start: datetime = None, end: datetime = None, category: str = None, description: str = None) -> List[Tuple]:
+def select(cursor: Cursor, start: datetime, end: datetime, category: str, description: str) -> List[Tuple]:
     query = '''
         SELECT e.id, e.description, c.name AS category, e.amount, e.date_time, e.observation
         FROM expenses e
@@ -35,5 +35,5 @@ def select(cursor: Cursor, start: datetime = None, end: datetime = None, categor
     cursor.execute(query, (params))
     return cursor.fetchall()
 
-def delete(cursor: Cursor, id: int) -> None:
+def deactivate(cursor: Cursor, id: int) -> None:
     cursor.execute('UPDATE expenses SET is_active = 0 WHERE id = ?', (id,))
