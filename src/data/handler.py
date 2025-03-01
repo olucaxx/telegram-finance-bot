@@ -2,6 +2,7 @@ import sqlite3
 from datetime import datetime
 from typing import Callable, List, Tuple
 from sql_handler import categories, expenses, initializer
+from utils import prep_str
 
 PATH = 'src/data/records.db'
 
@@ -20,16 +21,28 @@ def execute_query(func: Callable, *args, **kwargs) -> None:
 def create_tables() -> None:
     execute_query(initializer)
 
-def insert_into_categories(category: str) -> None:
-    execute_query(categories.insert, category)
+### CATEGORIES HANDLERS
 
-def delete_from_categories(category: str) -> None:
-    category_id = select_from_categories(category)[0][0]
-    execute_query(expenses.update, category_id)
-    execute_query(categories.delete, category)
+def insert_into_categories(category_name: str) -> None:
+    category_name = prep_str(category_name)
     
-def select_from_categories(category: str | None = None) -> List[Tuple]:
-    return execute_query(categories.select, category)
+    try: 
+        print(select_from_categories(category_name, False)[0][0])
+        execute_query(categories.reactivate, category_name)
+        return
+    except (IndexError, TypeError) as e: 
+        print(e)
+        pass
+    
+    execute_query(categories.insert, category_name)
+    
+def select_from_categories(category: str | None = None, check_existense: bool = True) -> List[Tuple]:
+    return execute_query(categories.select, prep_str(category), check_existense)
+
+def deactivate_from_categories(category: str) -> None:
+    execute_query(categories.deactivate, prep_str(category))
+
+### EXPENSES HANDLERS
 
 def insert_into_expenses(description: str, category: int, amount: float, date_time: datetime, observation: str) -> None:
     try:

@@ -4,17 +4,20 @@ def initializer(cursor: Cursor):
     cursor.execute('''        
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name VARCHAR(255) NOT NULL
+            name TEXT NOT NULL,
+            is_active INTEGER DEFAULT 1 CHECK (is_active IN (0, 1))
         )'''
     )
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS expenses (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            description VARCHAR(255) NOT NULL,
-            category INT, 
-            amount DECIMAL(10, 2) NOT NULL,
-            date_time DATETIME NOT NULL,
+            description TEXT NOT NULL,
+            category INTEGER NOT NULL, 
+            amount REAL NOT NULL,
+            date_time TEXT NOT NULL,
             observation TEXT,
+            is_active INTEGER DEFAULT 1 CHECK (is_active IN (0, 1)),
             FOREIGN KEY (category) REFERENCES categories(id)
         )'''
     )
+    

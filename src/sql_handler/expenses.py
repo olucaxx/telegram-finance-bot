@@ -9,16 +9,31 @@ def insert(cursor: Cursor, description: str, category_id: int, amount: float, da
         ''', (description, category_id, amount, date_time, observation)
     )
 
-def select(cursor: Cursor, start: datetime, end: datetime) -> List[Tuple]:
-    cursor.execute("""
+def select(cursor: Cursor, start: datetime = None, end: datetime = None, category: str = None, description: str = None) -> List[Tuple]:
+    query = '''
         SELECT e.id, e.description, c.name AS category, e.amount, e.date_time, e.observation
         FROM expenses e
         JOIN categories c ON e.category = c.id
-        WHERE e.date_time BETWEEN ? AND ?
-        ORDER BY date_time ASC
-        """, (start, end)
-    )
+        WHERE 1=1
+        '''
+    params = []
+        
+    if start and end:
+        query += ' AND e.date_time BETWEEN ? AND ?'
+        params.append(start, end)
+        
+    if category:
+        query += ' AND c.name = ?'
+        params.append(category)
+        
+    if description:
+        query += ' AND e.descrition = ?'
+        params.append(description)
+        
+    query += ' AND e.is_active = 1 ORDER BY e.date_time ASC'
+        
+    cursor.execute(query, (params))
     return cursor.fetchall()
 
-def update(cursor: Cursor, old_category_id: int) -> None:
-    cursor.execute('UPDATE expenses SET category = NULL WHERE category = ?', (old_category_id,))
+def delete(cursor: Cursor, id: int) -> None:
+    cursor.execute('UPDATE expenses SET is_active = 0 WHERE id = ?', (id,))
